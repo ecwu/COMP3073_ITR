@@ -1,0 +1,53 @@
+' Test left servo
+' clockwise 3s, stop 1s, counterclockwise 3s.
+' PULSOUT PORT, Duration
+
+'{$STAMP BS2}
+'{$PBASIC 2.5}
+
+DEBUG CLS
+DEBUG "Program Running!"
+
+counter  VAR  Word
+
+PAUSE 1000
+
+FOR counter = 1 TO 240
+  PULSOUT 12, 859
+  PULSOUT 13, 650
+  PAUSE 20
+NEXT
+
+PAUSE 300
+
+FOR counter = 0 TO 31
+  PULSOUT 12, 809
+  PULSOUT 13, 800
+  PAUSE 20
+NEXT
+
+PAUSE 300
+
+FOR counter = 0 TO 325
+  PULSOUT 12, 859
+  PULSOUT 13, 650
+  PAUSE 20
+NEXT
+
+PAUSE 300
+
+FOR counter = 0 TO 33
+  PULSOUT 12, 809
+  PULSOUT 13, 800
+  PAUSE 20
+NEXT
+
+FOR counter = 1 TO 230
+  PULSOUT 12, 859
+  PULSOUT 13, 650
+  PAUSE 20
+NEXT
+
+END
+
+
