@@ -1,0 +1,9 @@
+# servo 12 left wheel
+- 659 full speed cw
+- 759 stop
+- 859 full speed ccw
+
+# servo 13 right wheel
+- 650 full speed cw
+- 750 stop
+- 850 full speed ccw

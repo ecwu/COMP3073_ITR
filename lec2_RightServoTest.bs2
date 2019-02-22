@@ -1,0 +1,51 @@
+' Test right servo
+' clockwise 3s, stop 1s, counterclockwise 3s.
+' PULSOUT PORT, Duration
+
+'{$STAMP BS2}
+'{$PBASIC 2.5}
+
+DEBUG CLS
+DEBUG "Program Running!"
+
+' SERVO 12
+' 659 full speed cw
+' 759 stop
+' 859 full speed ccw
+
+'** counter	VAR	WORD
+'** 
+'** FOR counter = 1 TO 122
+'** 	PULSOUT 12, 650
+'** 	PAUSE 20
+'** NEXT
+'** 
+'** FOR counter = 1 TO 40
+'** 	PULSOUT 12, 750
+'** 	PAUSE 20
+'** NEXT
+'** 
+'** FOR counter = 1 TO 122
+'** 	PULSOUT 12, 850
+'** 	PAUSE 20
+'** NEXT
+'** 
+'** END
+'** 
+'** PAUSE 2000
+
+counter VAR WORD
+
+FOR counter=1 TO 100
+	PULSOUT 12, 859
+	PULSOUT 13, 650
+	PAUSE 20
+NEXT
+
+PAUSE 1000
+
+FOR counter = 1 TO 100
+	PULSOUT 12, 659
+	PULSOUT 13, 850
+	PAUSE 20
+NEXT
