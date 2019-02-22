@@ -1,0 +1,8 @@
+'{$STAMP BS2}
+'{$PBASIC 2.5}
+
+DEBUG "HELLO WORLD!"
+
+DEBUG CR, "What's 1+2+3+4" 'CR means change line
+DEBUG CR, "The answer is: "
+DEBUG DEC 1+2+3+4
