@@ -1,0 +1,55 @@
+'{$STAMP BS2}
+'{$PBASIC 2.5}
+'left 13 752-756       right 12      752-756
+DEBUG CLS
+DEBUG "Program Running!"
+
+counter  VAR  Word
+
+'12: 751-756 754
+'13: 751-757 754
+DO
+  ' LEFT HIT
+  IF (IN5=0 AND IN8=1) THEN
+    FOR counter = 0 TO 30
+      GOSUB goback
+    NEXT
+    PAUSE 300
+    FOR counter = 0 TO 20
+      PULSOUT 12, 854
+      PAUSE 20
+    NEXT
+  ' RIGHT HIT
+  ELSEIF (IN8=0 AND IN5=1) THEN
+    FOR counter = 0 TO 30
+      GOSUB goback
+    NEXT
+    PAUSE 300
+    FOR counter = 0 TO 20
+      PULSOUT 13, 654
+      PAUSE 20
+    NEXT
+  ' BOTH HIT
+  ELSEIF (IN8=0 AND IN5=0) THEN
+    FOR counter = 0 TO 30
+      GOSUB goback
+    NEXT
+    PAUSE 300
+  ENDIF
+  IF (IN5=1 AND IN8=1) THEN
+  PULSOUT 12, 854
+  PULSOUT 13, 654
+  PAUSE 20
+  ENDIF
+LOOP
+
+
+goforward:
+  PULSOUT 12, 854
+  PULSOUT 13, 654
+RETURN
+
+goback:
+  PULSOUT 12, 654
+  PULSOUT 13, 854
+RETURN
