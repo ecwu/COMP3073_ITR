@@ -1,0 +1,109 @@
+' Test left servo
+' clockwise 3s, stop 1s, counterclockwise 3s.
+' PULSOUT PORT, Duration
+
+'{$STAMP BS2}
+'{$PBASIC 2.5}
+'left 13 752-756       right 12      752-756
+DEBUG CLS
+DEBUG "Program Running!"
+
+leftstatus  VAR  Word
+rightstatus  VAR  Word
+loopingtime VAR Word
+loopdir VAR Word
+
+loopingtime = 0
+loopdir = 0
+
+' PIN info:
+' 2 -> 0
+' 8 -> 9
+restart:
+DO
+
+GOSUB check
+
+IF (leftstatus = 0 AND rightstatus = 0) THEN
+' OBJECT FOUND IN THE FRONT
+GOSUB gow
+ENDIF
+
+IF (leftstatus = 1 AND rightstatus = 0) THEN
+' OBJECT FOUND ON RIGHTSIDE
+GOSUB gowd
+PAUSE 20
+GOSUB gow
+ENDIF
+
+IF (leftstatus = 0 AND rightstatus = 1) THEN
+' OBJECT FOUNF ON LEFTSIDE
+GOSUB gowa
+PAUSE 20
+GOSUB gow
+ENDIF
+
+IF (leftstatus = 1 AND rightstatus = 1) THEN
+' OBJECT NOT FOUND
+IF (loopdir = 0) THEN
+  GOSUB goroundcw
+ELSEIF (loopdir = 1) THEN
+  GOSUB goroundccw
+ENDIF
+loopingtime = loopingtime + 1
+  IF (loopingtime > 100) THEN
+    loopingtime = 0
+    IF (loopdir = 0) THEN
+      loopdir = 1
+    ELSEIF (loopdir = 1) THEN
+      loopdir = 0
+    ENDIF
+  ENDIF
+ENDIF
+
+PAUSE 20
+LOOP
+
+gow:
+' GO FORWARD
+  PULSOUT 12, 854
+  PULSOUT 13, 654
+RETURN
+
+gowa:
+' GO FORWARD LEFT
+  PULSOUT 12, 654
+  PULSOUT 13, 654
+RETURN
+
+gowd:
+' GO FORWARD RIGHT
+  PULSOUT 12, 854
+  PULSOUT 13, 854
+RETURN
+
+goroundcw:
+  PULSOUT 12, 854
+  PULSOUT 13, 854
+RETURN
+
+goroundccw:
+  PULSOUT 12, 654
+  PULSOUT 13, 654
+RETURN
+
+check:
+  FREQOUT 2, 1, 38500
+  IF (IN0 = 0) THEN
+    rightstatus = 0
+  ELSE
+    rightstatus = 1
+  ENDIF
+
+  FREQOUT 8, 1, 38500
+  IF (IN9 = 0) THEN
+    leftstatus = 0
+  ELSE
+    leftstatus = 1
+  ENDIF
+RETURN
