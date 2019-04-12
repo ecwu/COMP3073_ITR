@@ -1,0 +1,35 @@
+'{$STAMP BS2}
+'{$PBASIC 2.5}
+DEBUG CLS
+DEBUG "Program Running!"
+counter VAR Word
+
+' right ccw left cw (back) for 3s
+' both ccw (turn right) for 0.6s
+' both cw (turn left) for 0.6s
+' right cw left ccw (forward) for 3s
+
+FOR counter = 1 TO 110
+  PULSOUT 12, 654
+  PULSOUT 13, 854
+  PAUSE 20
+NEXT
+
+FOR counter = 1 TO 22
+  PULSOUT 12, 854
+  PULSOUT 13, 854
+  PAUSE 20
+NEXT
+
+FOR counter = 1 TO 24
+  PULSOUT 12, 654
+  PULSOUT 13, 654
+  PAUSE 20
+NEXT
+
+FOR counter = 1 TO 110
+  PULSOUT 12, 854
+  PULSOUT 13, 654
+  PAUSE 20
+NEXT
+

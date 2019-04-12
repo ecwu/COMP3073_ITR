@@ -1,0 +1,20 @@
+'{$STAMP BS2}
+'{$PBASIC 2.5}
+
+' two led, led on pin6 flash on and off per one second
+' led on pin7 flash on and off per two seconds
+
+DO
+     HIGH 6
+     HIGH 7 
+     PAUSE 500
+     LOW 6
+     PAUSE 500
+     
+     HIGH 6
+     LOW 7
+     PAUSE 500
+     LOW 6
+     PAUSE 500
+LOOP 
+

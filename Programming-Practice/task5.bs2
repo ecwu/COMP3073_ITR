@@ -1,0 +1,14 @@
+'{$STAMP BS2}
+'{$PBASIC 2.5}
+
+' Two LED, turn on for 0.5s, then turn off 0.5s, loop forever
+
+time VAR Nib
+FOR time=1 TO 10
+  HIGH 6
+  HIGH 7
+  PAUSE 500
+  LOW 6
+  LOW 7
+  PAUSE 500
+NEXT

@@ -1,0 +1,13 @@
+'{$STAMP BS2}
+'{$PBASIC 2.5}
+DEBUG CLS
+DEBUG "Program Running!"
+
+' Keep spin at fix position
+
+DO
+
+   PULSOUT 12, 854
+   PULSOUT 13, 854
+
+LOOP

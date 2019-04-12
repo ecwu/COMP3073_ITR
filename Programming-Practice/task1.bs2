@@ -1,0 +1,12 @@
+'{$STAMP BS2}
+'{$PBASIC 2.5}
+
+time VAR Word
+DO
+  HIGH 6
+  PAUSE 3
+  RCTIME 6, 1, time
+  'calculate charge time for pin 6
+
+  DEBUG HOME, ": time = ", DEC5 time
+LOOP

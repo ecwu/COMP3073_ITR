@@ -1,0 +1,10 @@
+'{$STAMP BS2}
+'{$PBASIC 2.5}
+
+' on 0.25s, off 0.25s (total 0.5s) loop forever
+DO
+  HIGH 6
+  PAUSE 250
+  LOW 6
+  PAUSE 250
+LOOP

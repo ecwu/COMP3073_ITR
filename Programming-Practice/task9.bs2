@@ -1,0 +1,29 @@
+'{$STAMP BS2}
+'{$PBASIC 2.5}
+
+counter VAR WORD
+
+' Two subroutines
+' Blink: turn LED on and off once per second
+' Spin: spin the car for 2 second
+' call this two subroutines loop forever
+
+DO
+GOSUB Blink
+GOSUB Spin
+LOOP
+
+Blink:
+	HIGH 6
+	PAUSE 500
+	LOW 6
+	PAUSE 500
+	RETURN
+
+Spin:
+	FOR counter = 1 TO 74
+		PULSOUT 12, 854
+		PULSOUT 13, 854
+		PAUSE 20
+	NEXT
+	RETURN

@@ -1,0 +1,12 @@
+'{$STAMP BS2}
+'{$PBASIC 2.5}
+
+' flash on and off in 1s, loop 10 times
+
+time VAR Nib
+FOR time = 1 TO 10
+  HIGH 6
+  PAUSE 500
+  LOW 6
+  PAUSE 500
+ NEXT
