@@ -1,0 +1,107 @@
+'{$STAMP BS2}
+'{$PBASIC 2.5}
+
+DEBUG CLS
+DEBUG "Program Running!"
+
+timeleft VAR WORD
+timeright VAR WORD
+
+turntime VAR WORD
+
+timediff VAR WORD
+blackhole VAR WORD
+
+GOSUB init
+
+DO
+  GOSUB check
+  IF (timeright >= blackhole AND timeleft >= blackhole) THEN
+    ' When meet final line
+    GOTO finalend
+  ENDIF
+
+  IF (timeleft - timeright > timediff AND timeleft - timeright < 5000) THEN
+    ' bias to left
+    DEBUG CR, "BIAS TO LEFT"
+    GOSUB leftbacktocenter
+  ELSEIF (timeright - timeleft > timediff AND timeright - timeleft < 5000) THEN
+    ' bias to right
+    DEBUG CR, "BIAS TO RIGHT"
+    GOSUB rightbacktocenter
+  ELSE
+  ' Go forward
+    DEBUG CR, "GOFORWARD"
+    GOSUB goforward
+    GOSUB goforward
+    GOSUB goforward
+  ENDIF
+
+  PAUSE 30
+LOOP
+
+finalend:
+  DEBUG CR, "FINISHED."
+  END
+
+check:
+  HIGH 6
+  PAUSE 3
+  RCTIME 6, 1, timeleft
+
+  HIGH 3
+  PAUSE 3
+  RCTIME 3, 1, timeright
+
+  DEBUG HOME, "time3 = ", DEC5 timeright, ": time6 = ", DEC5 timeleft
+RETURN
+
+init:
+  ' variable for black pause
+  blackhole = 120
+  timediff = 15
+  DEBUG CR, "Sensing environment..."
+RETURN
+
+turnleft:
+  ' turn left
+  'PULSOUT 12, 654
+  PULSOUT 13, 654
+RETURN
+
+turnright:
+  ' turn right
+  PULSOUT 12, 854
+  'PULSOUT 13, 854
+RETURN
+
+leftbacktocenter:
+  DO
+    GOSUB check
+    IF (timeleft - timeright > timediff) THEN
+      ' bias to left confirm
+      GOSUB turnright
+    ELSE
+      DEBUG CR, "ALREADY BACK TO CENTER."
+      EXIT
+    ENDIF
+  LOOP
+RETURN
+
+rightbacktocenter:
+  DO
+    GOSUB check
+    IF (timeright - timeleft > timediff) THEN
+      ' bias to right confirm
+      GOSUB turnleft
+    ELSE
+      DEBUG CR, "ALREADY BACK TO CENTER."
+      EXIT
+    ENDIF
+  LOOP
+RETURN
+
+goforward:
+  PULSOUT 12, 854
+  PULSOUT 13, 654
+RETURN

@@ -1,20 +1,24 @@
 '{$STAMP BS2}
 '{$PBASIC 2.5}
+
 DEBUG CLS
 DEBUG "Program Running!"
 
-timeleft VAR Word
-timeright VAR Word
+timeleft VAR WORD
+timeright VAR WORD
 
-turntime VAR Word
+turntime VAR WORD
 
-timediff VAR Word
-blackhole VAR Word
+timediff VAR WORD
+blackhole VAR WORD
 
 GOSUB init
 
 DO
   GOSUB check
+  IF (timeright >= blackhole AND timeleft >= blackhole) THEN
+    GOTO finalend
+  ENDIF
   IF (timeleft - timeright > timediff) THEN
   ' bias to left
   DEBUG CR, "BIAS TO LEFT"
@@ -25,19 +29,18 @@ DO
   DEBUG CR, "BIAS TO RIGHT"
   GOSUB rightbacktocenter
   GOSUB goforward
-  ELSEIF (timeright >= blackhole AND timeleft >= blackhole) THEN
-  ' When meet final line
-    GOTO finalend
   ELSE
   ' Go forward
     GOSUB goforward
     GOSUB goforward
     GOSUB goforward
   ENDIF
-  PAUSE 30
+  PAUSE 20
 LOOP
 
 finalend:
+  GOSUB goforward
+  GOSUB goforward
   DEBUG CR, "FINISHED."
   END
 
@@ -55,20 +58,22 @@ RETURN
 
 init:
   ' variable for black pause
-  blackhole = 120
-  timediff = 15
+  blackhole = 65
+  timediff = 10
   DEBUG CR, "Sensing environment..."
 RETURN
 
 turnleft:
   ' turn left
   'PULSOUT 12, 654
-  PULSOUT 13, 654
+  PULSOUT 13, 854
+  PULSOUT 13, 754
 RETURN
 
 turnright:
   ' turn right
-  PULSOUT 12, 854
+  PULSOUT 12, 654
+  PULSOUT 12, 754
   'PULSOUT 13, 854
 RETURN
 
