@@ -1,0 +1,91 @@
+' IR Remote for the Boe-Bot - RecordAndDisplayPwm.bs2
+' Measure all data pulses from SONY IR remote set to control a TV.
+' {$STAMP BS2}
+' {$PBASIC 2.5}
+
+time VAR Word(12) ' SONY TV remote variables.
+index VAR Nib
+signal VAR Nib
+
+' Display heading.
+DEBUG "time ARRAY", CR,
+"PWM MEASUREMENTS", CR,
+"Element Duration, 2-us", CR,
+"------- --------------"
+DO ' Beginning of main loop.
+DO ' Wait for rest between messages.
+  PULSIN 9, 1, time(0)
+LOOP UNTIL time(0) > 1000
+
+  PULSIN 9, 0, time(0) ' Measure/store data pulses.
+  PULSIN 9, 0, time(1)
+  PULSIN 9, 0, time(2)
+  PULSIN 9, 0, time(3)
+  PULSIN 9, 0, time(4)
+  PULSIN 9, 0, time(5)
+  PULSIN 9, 0, time(6)
+  PULSIN 9, 0, time(7)
+  PULSIN 9, 0, time(8)
+  PULSIN 9, 0, time(9)
+  PULSIN 9, 0, time(10)
+  PULSIN 9, 0, time(11)
+signal = 0
+FOR index = 3 TO 0 ' Display 4 pulse measurements.
+  'DEBUG CRSRXY, 0, 4 + index, "time(", DEC index, ")",
+  'CRSRXY, 9, 4 + index, DEC time(index), CLREOL
+  IF (time(index) > 270 AND time(index) < 330) THEN
+    signal = signal + (0 << index)
+  ELSEIF (time(index) > 570 AND time(index) < 630) THEN
+    signal = signal + (1 << index)
+  ELSE
+    signal = 0
+    EXIT
+  ENDIF
+NEXT
+DEBUG ? signal, CR
+
+IF (signal = 1) THEN
+' BACKWARD
+GOSUB backward
+ELSEIF (signal = 7) THEN
+' FORWARD
+GOSUB forward
+
+ELSEIF (signal = 3) THEN
+' RIGHT
+GOSUB right
+ELSEIF (signal = 5) THEN
+' LEFT
+GOSUB left
+
+ELSEIF (signal = 4) THEN
+' SPIN
+GOSUB spin
+ELSE
+'IDLE
+ENDIF
+
+LOOP ' Repeat main loop.
+
+forward:
+  PULSOUT 12, 854
+  PULSOUT 13, 654
+  RETURN
+
+backward:
+  PULSOUT 12, 554
+  PULSOUT 13, 854
+  RETURN
+
+left:
+  PULSOUT 13, 654
+  RETURN
+
+right:
+  PULSOUT 12, 654
+  RETURN
+
+spin:
+  PULSOUT 12, 854
+  PULSOUT 13, 854
+  RETURN
