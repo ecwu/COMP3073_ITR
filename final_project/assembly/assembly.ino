@@ -8,7 +8,7 @@
 const int na0 = 0;
 const int na1 = 1;
 const int btnRegisterNewKnock = 2;
-const int sensorHallMagnetic = 3;
+const int btnStartKnock = 3;
 const int sensorMicphone = 4;
 const int sspinRFID = 5;
 const int rstRFID = 6;
@@ -29,14 +29,12 @@ const int maximumKnocks = 20;       // Maximum number of knocks allow
 const int knockTimeout = 1200;     // Know Waiting time
 
 // Variable
-int doorStatus;
+// Knock Btn Status
+int knockBtnValue;
 int knockSensorValue, programButtonPressed, now;
 // Initial Knock Storage
 int storedKnock[maximumKnocks] = {50, 50, 50, 50, 50, 50, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 int knockReadings[maximumKnocks];
-// HallInterval
-unsigned long hallPrevMillis = 0;
-unsigned long hallHoldMillis = 2000; // 2s
 
 // Binding Compoments
 Servo doorServo;
@@ -49,7 +47,7 @@ void setup() {
   Serial.println("System: Data rates set to 9600, Start Initializing...");
   doorServo.attach(servoMotor);
   pinMode(btnRegisterNewKnock, INPUT);
-  pinMode(sensorHallMagnetic, INPUT);
+  pinMode(btnStartKnock, INPUT);
   pinMode(sensorMicphone, INPUT);
   Serial.println("System: Binding PINs...");
 
@@ -70,9 +68,6 @@ void setup() {
     }
   }
 
-  doorStatus = 1;
-  Serial.println("Door: Status set to 1 (open)");
-
   SPI.begin();
   mfrc522.PCD_Init();
   Serial.println("PFID Module: Card reader Initializing..");
@@ -81,13 +76,8 @@ void setup() {
 }
 
 void loop() {
-  if (doorStatus == 1) {
-    if (checkHall() == true) {
-      closeDoor();
-      return;
-    }
-  } else {
-    // check knock
+  // check knock
+  do{
     knockSensorValue = digitalRead(sensorMicphone);
     if (digitalRead(btnRegisterNewKnock) == HIGH) {
       programButtonPressed = true;
@@ -98,20 +88,17 @@ void loop() {
       listenToKnock();
       return;
     }
-    // check finger print
-    if (getFingerprintIDez() >= 0) {
-      openDoor();
-      return;
-    }
-    // check RFID
-    if (checkRFID() == true) {
-      openDoor();
-      return;
-    }
+  } while (digitalRead(btnStartKnock) == HIGH || digitalRead(btnRegisterNewKnock) == HIGH);
+  // check finger print
+  if (getFingerprintIDez() >= 0) {
+    openDoor();
+    return;
   }
-
-
-
+  // check RFID
+  if (checkRFID() == true) {
+    openDoor();
+    return;
+  }
 }
 
 int openDoor() {
@@ -119,7 +106,6 @@ int openDoor() {
   delay(245);
   doorServo.writeMicroseconds(1500);
   Serial.println("System: Door opened");
-  doorStatus = 1;
   return 0;
 }
 
@@ -128,7 +114,6 @@ int closeDoor() {
   delay(255);
   doorServo.writeMicroseconds(1500);
   Serial.println("System: Door closed");
-  doorStatus = 0;
   return 0;
 }
 
@@ -185,7 +170,7 @@ void listenToKnock() {
 
   if (programButtonPressed == false) { // Knock listening mode
     if (validateKnock() == true) {
-      closeDoor();
+      openDoor();
     } else {
       Serial.println("Knock Module: knock unmatch");
     }
@@ -268,18 +253,4 @@ int getFingerprintIDez() {
   Serial.print(" with confidence of ");
   Serial.println(finger.confidence);
   return finger.fingerID;
-}
-
-boolean checkHall() {
-  int hallStatus = digitalRead(sensorHallMagnetic);
-  if (hallStatus == HIGH) {
-    hallPrevMillis = millis();
-    while (digitalRead(sensorHallMagnetic) == HIGH) {
-      if (millis() - hallPrevMillis > hallHoldMillis) {
-        Serial.println("Hall Magnetic: Door closed for 2s");
-        return true;
-      }
-    }
-  }
-  return false;
 }
