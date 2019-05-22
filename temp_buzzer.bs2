@@ -1,0 +1,102 @@
+'{$STAMP BS2}
+'{$PBASIC 2.5}
+
+' BTN IN9
+' ARDUINO IN2
+' HALL IN8
+
+isOpen VAR Byte
+ARDUINO VAR Byte
+BTN VAR Byte
+HALL VAR Byte
+
+ITER VAR Word
+
+isOpen = 1
+ARDUINO = 0
+BTN = 0
+HALL = 0
+DO
+' READ STATUS
+'CHECK BTN
+
+IF IN9 = 1 THEN
+BTN = 1
+ENDIF
+
+'CHECK ARDUINO
+
+DEBUG ? IN2
+
+'CHECK HALL
+
+IF IN8 = 1 THEN
+FOR ITER = 0 TO 1000
+  IF IN8 = 1 THEN
+    HALL = 1
+  ELSE
+    HALL = 0
+    EXIT
+  ENDIF
+NEXT
+ENDIF
+
+
+IF isOpen = 1 THEN
+  IF BTN = 1 THEN
+    DEBUG CR, "LOCK: Close - BTN"
+    GOSUB close
+    BTN = 0
+  ENDIF
+  IF HALL = 1 THEN
+    DEBUG CR, "LOCK: Close - HALL"
+    GOSUB close
+    HALL = 0
+  ENDIF
+ELSE
+  IF BTN = 1 THEN
+    DEBUG CR, "LOCK: Open - BTN"
+    GOSUB open
+    BTN = 0
+  ENDIF
+ENDIF
+
+PAUSE 100
+LOOP
+
+
+
+open:
+  FOR ITER = 0 TO 20
+    PULSOUT 12, 650
+    PAUSE 30
+  NEXT
+  isOpen = 1
+  GOSUB openbeep
+RETURN
+
+close:
+ FOR ITER = 0 TO 20
+    PULSOUT 12, 850
+    PAUSE 30
+  NEXT
+ isOpen = 0
+ GOSUB closebeep
+RETURN
+
+openbeep:
+  FREQOUT 4, 100, 2000
+  PAUSE 100
+  FREQOUT 4, 100, 2000
+  PAUSE 100
+  FREQOUT 4, 100, 2000
+  PAUSE 100
+RETURN
+
+closebeep:
+  FREQOUT 4, 500, 2000
+  PAUSE 100
+RETURN
+
+
+
