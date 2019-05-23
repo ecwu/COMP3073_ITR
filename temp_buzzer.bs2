@@ -1,14 +1,17 @@
 '{$STAMP BS2}
 '{$PBASIC 2.5}
 
-' BTN IN9
-' ARDUINO IN2
+' BTN IN11
+' ARDUINO IN9
 ' HALL IN8
 
 isOpen VAR Byte
 ARDUINO VAR Byte
 BTN VAR Byte
 HALL VAR Byte
+time VAR Word(7) ' SONY TV remote variables.
+index VAR Nib
+signal VAR Byte
 
 ITER VAR Word
 
@@ -20,14 +23,45 @@ DO
 ' READ STATUS
 'CHECK BTN
 
-IF IN9 = 1 THEN
+IF IN10 = 1 THEN
 BTN = 1
 ENDIF
 
 'CHECK ARDUINO
 
-DEBUG ? IN2
+ ' Wait for rest between messages.
+ITER = 0
+DO ' Wait for rest between messages.
+PULSIN 9, 1, time(0)
+ITER = ITER + 1
+LOOP UNTIL time(0) > 1000 OR ITER > 10
+IF time(0) > 1000 THEN
+  PULSIN 9, 0, time(0) ' Measure/store data pulses.
+  PULSIN 9, 0, time(1)
+  PULSIN 9, 0, time(2)
+  PULSIN 9, 0, time(3)
+  PULSIN 9, 0, time(4)
+  PULSIN 9, 0, time(5)
+  PULSIN 9, 0, time(6)
 
+signal = 0
+
+FOR index = 5 TO 0 ' Display 4 pulse measurements.
+  'DEBUG CRSRXY, 0, 4 + index, "time(", DEC index, ")",
+  'CRSRXY, 9, 4 + index, DEC time(index), CLREOL
+  IF (time(index) > 270 AND time(index) < 370) THEN
+    signal = signal + (0 << index)
+  ELSEIF (time(index) > 570 AND time(index) < 670) THEN
+    signal = signal + (1 << index)
+  ELSE
+    signal = 0
+    EXIT
+  ENDIF
+NEXT
+IF signal = 21 THEN
+  ARDUINO = 1
+ENDIF
+ENDIF
 'CHECK HALL
 
 IF IN8 = 1 THEN
@@ -58,6 +92,11 @@ ELSE
     DEBUG CR, "LOCK: Open - BTN"
     GOSUB open
     BTN = 0
+  ENDIF
+  IF ARDUINO = 1 THEN
+    DEBUG CR, "LOCK: Open - ARDUINO"
+    GOSUB open
+    ARDUINO = 0
   ENDIF
 ENDIF
 
@@ -97,6 +136,5 @@ closebeep:
   FREQOUT 4, 500, 2000
   PAUSE 100
 RETURN
-
 
 
