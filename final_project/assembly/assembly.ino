@@ -1,3 +1,4 @@
+#include <IRremote.h>
 #include <SPI.h>
 #include <Servo.h>
 #include <MFRC522.h>
@@ -5,17 +6,17 @@
 #include <SoftwareSerial.h>
 
 // PIN number
-const int na0 = 0;
-const int na1 = 1;
+const int na0 = 0; // DO NOT CHANGE
+const int na1 = 1; // DO NOT CHANGE
 const int btnRegisterNewKnock = 2;
-const int btnStartKnock = 3;
+const int openDoorIR = 3;
 const int sensorMicphone = 4;
 const int sspinRFID = 5;
 const int rstRFID = 6;
 const int sensorFPInput = 7;
 const int sensorFPOutput = 8;
-const int na9 = 9;
-const int servoMotor = 10;
+const int btnStartKnock = 9;
+const int na10 = 10;
 const int RFID1 = 11;
 const int RFID2 = 12;
 const int RFID3 = 13;
@@ -33,22 +34,22 @@ const int knockTimeout = 1200;     // Know Waiting time
 int knockBtnValue;
 int knockSensorValue, programButtonPressed, now;
 // Initial Knock Storage
-int storedKnock[maximumKnocks] = {50, 50, 50, 50, 50, 50, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int storedKnock[maximumKnocks] = {50, 25, 25, 50, 100, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 int knockReadings[maximumKnocks];
 
 // Binding Compoments
-Servo doorServo;
 MFRC522 mfrc522(sspinRFID, rstRFID);
 SoftwareSerial fingerPrintSerial(sensorFPInput, sensorFPOutput);
 DYE_Fingerprint finger = DYE_Fingerprint(&fingerPrintSerial);
+IRsend irsend;
 
 void setup() {
   Serial.begin(9600);
   Serial.println("System: Data rates set to 9600, Start Initializing...");
-  doorServo.attach(servoMotor);
   pinMode(btnRegisterNewKnock, INPUT);
   pinMode(btnStartKnock, INPUT);
   pinMode(sensorMicphone, INPUT);
+  pinMode(openDoorIR, OUTPUT);
   Serial.println("System: Binding PINs...");
 
 
@@ -102,18 +103,12 @@ void loop() {
 }
 
 int openDoor() {
-  doorServo.writeMicroseconds(1300);
-  delay(245);
-  doorServo.writeMicroseconds(1500);
-  Serial.println("System: Door opened");
-  return 0;
-}
-
-int closeDoor() {
-  doorServo.writeMicroseconds(1700);
-  delay(255);
-  doorServo.writeMicroseconds(1500);
-  Serial.println("System: Door closed");
+  Serial.println("System: Sending OpenDoor Message");
+  for (int i = 0; i < 3; i++) {
+    irsend.sendSony(0xa90, 12); // Sony TV power code
+    delay(100);
+  }
+  Serial.println("System: Sent OpenDoor Message");
   return 0;
 }
 
